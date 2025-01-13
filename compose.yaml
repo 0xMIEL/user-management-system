@@ -1,0 +1,41 @@
+name: user-management-system
+
+services:
+  mysql:
+    image: mysql:9.1.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=user_management_system
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+    networks:
+      - back-tier
+
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-psecret']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  node:
+    build: .
+    ports:
+      - 127.0.0.1:5500:5500
+    volumes:
+      - ./src:/app/src
+
+    networks:
+      - back-tier
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql-data:
+
+networks:
+  back-tier:
