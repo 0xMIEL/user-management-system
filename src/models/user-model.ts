@@ -9,10 +9,7 @@ import {
 import sequelize from '../configs/db-config.ts'
 import Account from './account-model.ts'
 
-enum Role {
-	Admin,
-	User,
-}
+type Role = 'admin' | 'user'
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 	declare id: CreationOptional<UUID>
@@ -38,22 +35,60 @@ User.init(
 		},
 		firstName: {
 			type: DataTypes.STRING(50),
+			validate: {
+				is: {
+					args: /^[A-Za-z\s]+$/,
+					msg: 'First name can only contain letters and spaces.',
+				},
+				notEmpty: {
+					msg: 'First name cannot be empty.',
+				},
+			},
 		},
 		lastName: {
 			type: DataTypes.STRING(50),
+			validate: {
+				is: {
+					args: /^[A-Za-z\s]+$/,
+					msg: 'Last name can only contain letters and spaces.',
+				},
+				notEmpty: {
+					msg: 'Last name cannot be empty.',
+				},
+			},
 		},
 		email: {
 			type: DataTypes.STRING,
 			allowNull: false,
-			unique: true,
+			unique: {
+				name: 'unique_user_email',
+				msg: 'Email must be unique.',
+			},
 			validate: {
-				isEmail: true,
+				notNull: {
+					msg: 'Email cannot be null.',
+				},
+				notEmpty: {
+					msg: 'Email cannot be empty.',
+				},
+				isEmail: {
+					msg: 'Invalid email format.',
+				},
 			},
 		},
 		role: {
-			type: DataTypes.TINYINT.UNSIGNED,
-			defaultValue: Role.User,
+			type: DataTypes.ENUM('user', 'admin'),
+			defaultValue: 'user',
 			allowNull: false,
+			validate: {
+				notNull: {
+					msg: 'Role cannot be null.',
+				},
+				isIn: {
+					args: [['user', 'admin']],
+					msg: 'Role must be either "user" or "admin".',
+				},
+			},
 		},
 		updatedAt: DataTypes.DATE,
 		createdAt: DataTypes.DATE,
@@ -65,6 +100,11 @@ User.init(
 				key: 'id',
 			},
 			onDelete: 'CASCADE',
+			validate: {
+				notNull: {
+					msg: 'CreatorId cannot be null.',
+				},
+			},
 		},
 	},
 	{
@@ -76,12 +116,12 @@ User.init(
 )
 
 User.belongsTo(Account, {
-	foreignKey: 'id',
+	foreignKey: 'creatorId',
 	as: 'creator',
 })
 
 Account.hasMany(User, {
-	foreignKey: 'id',
+	foreignKey: 'creatorId',
 	as: 'users',
 })
 

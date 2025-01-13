@@ -1,0 +1,9 @@
+node_modules
+README.md
+package-lock.json
+compose.yaml
+.dockerignore
+.git
+.gitignore
+eslint.config.js
+.env.example
