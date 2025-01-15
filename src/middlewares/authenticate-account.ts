@@ -4,7 +4,11 @@ import GLOBAL_OPTIONS from '../configs/global-options.ts'
 import extractBearerToken from '../utils/extractBearerToken.ts'
 import detectError from './detect-error.ts'
 
-let authenticateAccount = (req: Request, res: Response, next: NextFunction) => {
+let authenticateAccount = (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
 	const { authorization } = req.headers
 
 	if (!authorization) throw new Error() // client

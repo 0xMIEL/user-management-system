@@ -6,7 +6,7 @@ const errorHandler = (
 	res: Response,
 	next: NextFunction,
 ) => {
-	res.sendStatus(400)
+	res.status(400).json(err)
 }
 
 export default errorHandler

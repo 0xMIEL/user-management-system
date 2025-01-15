@@ -10,12 +10,12 @@ const validateData = <T>(
 
 		if (error) {
 			const errorDetails = error.details.map(detail => detail.message)
+
 			res.status(400).json({
 				status: 'error',
 				message: 'Validation failed',
 				errors: errorDetails,
 			})
-			return
 		}
 
 		next()
