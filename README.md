@@ -47,7 +47,8 @@ Prerequisites: **Docker**
 
   ```json
   {
-  	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    "status": "success",
+    "message": "An account has been successfully registered."
   }
   ```
 
@@ -68,7 +69,9 @@ Prerequisites: **Docker**
 
   ```json
   {
-  	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    "status": "success",
+    "message": "A user has successfully granted an access token.",
+    "token": <token>
   }
   ```
 
@@ -86,7 +89,14 @@ Prerequisites: **Docker**
 
   - `password` - password to your account **(required)**
 
-  **Sample response:** 204
+  **Sample response:**
+
+  ```json
+  {
+    "status": "success",
+    "message": "The account has been successfully deregistered."
+  }
+  ```
 
 &nbsp;
 
