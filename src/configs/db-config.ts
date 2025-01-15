@@ -1,16 +1,16 @@
 import dotenv from 'dotenv'
 import mysql2 from 'mysql2'
 import { Sequelize, type Options } from 'sequelize'
-import parsePort from '../utils/parsePort.ts'
+import GLOBAL_OPTIONS from './global-options.ts'
 
 dotenv.config()
 
 const dbOptions: Options = {
-	host: process.env.DB_HOST ?? 'localhost',
-	port: parsePort(process.env.DB_PORT, 3306),
-	database: process.env.DB_DATABASE ?? 'user_management_system',
-	username: process.env.DB_USER ?? 'root',
-	password: process.env.DB_PASSWORD ?? 'secret',
+	host: GLOBAL_OPTIONS.DB_HOST,
+	port: GLOBAL_OPTIONS.DB_PORT,
+	database: GLOBAL_OPTIONS.DB_DATABASE,
+	username: GLOBAL_OPTIONS.DB_USER,
+	password: GLOBAL_OPTIONS.DB_PASSWORD,
 	dialect: 'mysql',
 	dialectModule: mysql2,
 	pool: {
