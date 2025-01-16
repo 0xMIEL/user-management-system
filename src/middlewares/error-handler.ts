@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
+import ClientError from '../errors/serverError.ts'
 
 const errorHandler = (
 	err: Error,
@@ -6,7 +7,13 @@ const errorHandler = (
 	res: Response,
 	next: NextFunction,
 ) => {
-	res.status(400).json(err)
+	if (err instanceof ClientError)
+		return res.status(400).json({
+			status: 'error',
+			message: err.message,
+		})
+	
+	return res.sendStatus(400)
 }
 
 export default errorHandler
