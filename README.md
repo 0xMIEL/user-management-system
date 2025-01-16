@@ -25,7 +25,7 @@ Prerequisites: **Docker**
    docker compose up -d
    ```
 
-4. If you have postman you can import collection from file `User-Management-System.postman_collection.json`
+4. If you have postman you can import collection from file `User-Management-System.postman_collection.json` (you only have to set url to http://localhost:5500 in collection settings)
 
 3. test and enjoy :)
 
