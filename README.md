@@ -20,6 +20,10 @@ Prerequisites: **Docker**
    docker compose up -d
    ```
 
+4. If you have postman you can import collection from file `User-Management-System.postman_collection.json`
+
+5. test and enjoy :)
+
 ## Environment
 
 - server: **Node.js 23.6.0 (Express.js)**
