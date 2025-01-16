@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt'
+import type { UUID } from 'crypto'
 import JWT from 'jsonwebtoken'
-import NotFoundError from '../errors/not-found-error.ts'
+import GLOBAL_OPTIONS from '../configs/global-options.ts'
+import ClientError from '../errors/serverError.ts'
 import Account from '../models/account-model.ts'
 
 class AccountService {
@@ -15,45 +17,45 @@ class AccountService {
 			},
 		})
 
-		if (!account) {
-			throw new NotFoundError('Wrong password or login.')
-		}
+		if (!account)
+			throw new ClientError('No account found with the provided login.')
 
 		const isPasswordCorrect = await bcrypt.compare(password, account.hash)
 
-		if (!isPasswordCorrect) {
-			throw new NotFoundError('Wrong password or login.')
-		}
+		if (!isPasswordCorrect)
+			throw new ClientError('The password you entered is incorrect.')
 
 		const token = JWT.sign(
 			{
-				id: account.id,
-				login: account.login,
+				accountId: account.id,
 			},
-			'secret',
+			GLOBAL_OPTIONS.JWT_SECRET,
+			{
+				expiresIn: '7 days',
+				issuer: 'user-management-app',
+			},
 		)
 
 		return token
 	}
 
-	static async unregister(id: string, password: string) {
+	static async deregister(accountId: UUID, password: string): Promise<void> {
 		const account = await Account.findOne({
 			where: {
-				id,
+				id: accountId,
 			},
 		})
 
-		if (!account) throw new NotFoundError('This account does not exist.')
+		if (!account) throw new ClientError('Account does not exist.')
 
 		const isPasswordCorrect = await bcrypt.compare(password, account.hash)
 
-		if (!isPasswordCorrect) {
-			throw new NotFoundError('Wrong password.')
-		}
+		if (!isPasswordCorrect)
+			throw new ClientError('Incorrect password provided.')
 
-		return await Account.destroy({
+		await Account.destroy({
 			where: {
-				id,
+				id: accountId,
 			},
 		})
 	}

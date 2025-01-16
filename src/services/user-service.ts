@@ -18,11 +18,10 @@ class UserService {
 		return await User.findAll(findOptions)
 	}
 
-	static async getById(creatorId: UUID, id: UUID): Promise<User | null> {
+	static async getById(creatorId: UUID, id: string): Promise<User | null> {
 		return await User.findOne({
 			where: {
 				id,
-				creatorId,
 			},
 		})
 	}
@@ -33,7 +32,7 @@ class UserService {
 
 	static async updateById(
 		creatorId: UUID,
-		id: UUID,
+		id: string,
 		updatedUserAttributes: UpdatedUserAttributes,
 	): Promise<number> {
 		const [affectedRows] = await User.update(updatedUserAttributes, {
@@ -43,7 +42,7 @@ class UserService {
 		return affectedRows
 	}
 
-	static async deleteById(creatorId: UUID, id: UUID): Promise<number> {
+	static async deleteById(creatorId: UUID, id: string): Promise<number> {
 		return await User.destroy({
 			where: {
 				id,

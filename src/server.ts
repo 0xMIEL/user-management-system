@@ -1,23 +1,18 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
-import http from 'node:http'
+import app from './app.ts'
 import sequelize from './configs/db-config.ts'
-
-const PORT = process.env.PORT ?? 3000
-
-const server = http.createServer(app)
+import GLOBAL_OPTIONS from './configs/global-options.ts'
 
 try {
 	await sequelize.authenticate()
 	console.info('\x1b[32m%s\x1b[0m', 'properly connected to the database...')
 
-	await sequelize.sync({ force: true }) // dev mode
+	await sequelize.sync({ force: false })
+	console.info('\x1b[32m%s\x1b[0m', 'properly synchronized the database...')
 
-	server.listen(PORT, () =>
+	app.listen(GLOBAL_OPTIONS.PORT, () =>
 		console.info(
 			'\x1b[34m%s\x1b[0m',
-			`server is running on http://localhost:${PORT}...`,
+			`server is running on http://localhost:${GLOBAL_OPTIONS.PORT}...`,
 		),
 	)
 } catch (error) {
