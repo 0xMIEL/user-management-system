@@ -9,14 +9,12 @@ import {
 import sequelize from '../configs/db-config.ts'
 import Account from './account-model.ts'
 
-type Role = 'admin' | 'user'
-
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 	declare id: CreationOptional<UUID>
 	declare firstName: string | null
 	declare lastName: string | null
 	declare email: string
-	declare role: CreationOptional<Role>
+	declare role: CreationOptional<string>
 	declare createdAt: CreationOptional<Date>
 	declare updatedAt: CreationOptional<Date>
 	declare creatorId: UUID
@@ -35,60 +33,22 @@ User.init(
 		},
 		firstName: {
 			type: DataTypes.STRING(50),
-			validate: {
-				is: {
-					args: /^[A-Za-z\s]+$/,
-					msg: 'First name can only contain letters and spaces.',
-				},
-				notEmpty: {
-					msg: 'First name cannot be empty.',
-				},
-			},
 		},
 		lastName: {
 			type: DataTypes.STRING(50),
-			validate: {
-				is: {
-					args: /^[A-Za-z\s]+$/,
-					msg: 'Last name can only contain letters and spaces.',
-				},
-				notEmpty: {
-					msg: 'Last name cannot be empty.',
-				},
-			},
 		},
 		email: {
 			type: DataTypes.STRING,
 			allowNull: false,
 			unique: {
 				name: 'unique_user_email',
-				msg: 'Email must be unique.',
-			},
-			validate: {
-				notNull: {
-					msg: 'Email cannot be null.',
-				},
-				notEmpty: {
-					msg: 'Email cannot be empty.',
-				},
-				isEmail: {
-					msg: 'Invalid email format.',
-				},
+				msg: 'This email is taken',
 			},
 		},
 		role: {
 			type: DataTypes.ENUM('user', 'admin'),
 			defaultValue: 'user',
 			allowNull: false,
-			validate: {
-				notNull: {
-					msg: 'Role cannot be null.',
-				},
-				isIn: {
-					args: [['user', 'admin']],
-					msg: 'Role must be either "user" or "admin".',
-				},
-			},
 		},
 		updatedAt: DataTypes.DATE,
 		createdAt: DataTypes.DATE,
@@ -100,11 +60,6 @@ User.init(
 				key: 'id',
 			},
 			onDelete: 'CASCADE',
-			validate: {
-				notNull: {
-					msg: 'CreatorId cannot be null.',
-				},
-			},
 		},
 	},
 	{

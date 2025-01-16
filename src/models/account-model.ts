@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt'
 import type { UUID } from 'crypto'
 import {
 	DataTypes,
@@ -14,7 +15,8 @@ class Account extends Model<
 > {
 	declare id: CreationOptional<UUID>
 	declare login: string
-	declare hash: string
+	declare password: string
+	declare hash: CreationOptional<string>
 	declare createdAt: CreationOptional<Date>
 }
 
@@ -30,36 +32,15 @@ Account.init(
 			allowNull: false,
 			unique: {
 				name: 'unique_account_login',
-				msg: 'Login must be unique.',
+				msg: 'This login is taken.',
 			},
-			validate: {
-				notNull: {
-					msg: 'Login cannot be null.',
-				},
-				notEmpty: {
-					msg: 'Login cannot be empty.',
-				},
-				is: {
-					args: /^[A-Za-z0-9_-]+$/,
-					msg: 'Login can only contain letters, numbers, underscores (_), and hyphens (-).',
-				},
-				len: {
-					args: [4, 15],
-					msg: 'Login must be between 4 and 15 characters long.',
-				},
-			},
+		},
+		password: {
+			type: DataTypes.VIRTUAL,
+			allowNull: false,
 		},
 		hash: {
 			type: DataTypes.STRING(60),
-			allowNull: false,
-			validate: {
-				notNull: {
-					msg: 'Hash cannot be null.',
-				},
-				notEmpty: {
-					msg: 'Hash cannot be empty.',
-				},
-			},
 		},
 		createdAt: DataTypes.DATE,
 	},
@@ -70,5 +51,11 @@ Account.init(
 		updatedAt: false,
 	},
 )
+
+Account.beforeCreate(async (account: Account) => {
+	if (account.password) {
+		account.hash = await bcrypt.hash(account.password, 10)
+	}
+})
 
 export default Account
