@@ -8,11 +8,16 @@ Prerequisites: **Docker**
 
 1. Clone repo
 
-   ```bash
-   git clone https://github.com/0xMIEL/user-management-system.git
-   ```
+  ```bash
+  git clone https://github.com/0xMIEL/user-management-system.git
+  ```
 
-2. Rename `.env.example` `.env` and adjust the settings.
+2. Clone `.env.example` as `.env`
+  
+  ```bash
+  cd user-management-system
+  cp .env.example .env
+  ```
 
 3. Build app
 
@@ -22,7 +27,7 @@ Prerequisites: **Docker**
 
 4. If you have postman you can import collection from file `User-Management-System.postman_collection.json`
 
-5. test and enjoy :)
+3. test and enjoy :)
 
 ## Environment
 
