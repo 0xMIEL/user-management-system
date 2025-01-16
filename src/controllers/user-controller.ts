@@ -1,7 +1,8 @@
 import type { Request, Response } from 'express'
 import type { CreationAttributes, WhereOptions } from 'sequelize'
-import ServerError from '../errors/clientError.ts'
-import ClientError from '../errors/serverError.ts'
+import STATUS_CODES from '../configs/status-codes.ts'
+import ClientError from '../errors/client-error.ts'
+import ServerError from '../errors/server-error.ts'
 import type User from '../models/user-model.ts'
 import type { UpdatedUserAttributes } from '../models/user-model.ts'
 import UserService from '../services/user-service.ts'
@@ -20,7 +21,7 @@ class UserController {
 
 		const users = await UserService.getAll(req.accountId, filter)
 
-		res.status(200).json(users)
+		res.status(STATUS_CODES.OK).json(users)
 	}
 
 	static async getOne(req: Request, res: Response) {
@@ -28,11 +29,12 @@ class UserController {
 
 		const { id } = req.params!
 
-		if (!id) throw new ClientError('Missing id param!')
+		if (!id)
+			throw new ClientError('Missing id param!', STATUS_CODES.BAD_REQUEST)
 
 		const user = await UserService.getById(req.accountId, id)
 
-		res.status(200).json(user)
+		res.status(STATUS_CODES.OK).json(user)
 	}
 
 	static async createOne(req: Request, res: Response) {
@@ -59,7 +61,7 @@ class UserController {
 
 		await UserService.create(creationAttributes)
 
-		res.sendStatus(201)
+		res.sendStatus(STATUS_CODES.CREATED)
 	}
 
 	static async updateOne(req: Request, res: Response) {
@@ -67,7 +69,8 @@ class UserController {
 
 		const { id } = req.params
 
-		if (!id) throw new ClientError('Missing id param!')
+		if (!id)
+			throw new ClientError('Missing id param!', STATUS_CODES.BAD_REQUEST)
 
 		const { firstName, lastName, role } = req.body
 
@@ -87,21 +90,24 @@ class UserController {
 
 		await UserService.updateById(req.accountId, id, updatedAttributes)
 
-		res.sendStatus(204)
+		res.sendStatus(STATUS_CODES.NO_CONTENT)
 	}
 
 	static async deleteOne(req: Request, res: Response) {
-		if (!req.accountId) throw new ServerError('Account ID is missing.')
+		if (!req.accountId)
+			throw new ServerError('Account ID is missing.', STATUS_CODES.BAD_REQUEST)
 
 		const { id } = req.params
 
-		if (!id) throw new ClientError('Missing id param!')
+		if (!id)
+			throw new ClientError('Missing id param!', STATUS_CODES.BAD_REQUEST)
 
 		const isDeleted = await UserService.deleteById(req.accountId, id)
 
-		if (!isDeleted) throw new ClientError('User does not exist.')
+		if (!isDeleted)
+			throw new ClientError('User does not exist.', STATUS_CODES.NOT_FOUND)
 
-		res.sendStatus(204)
+		res.sendStatus(STATUS_CODES.NO_CONTENT)
 	}
 }
 

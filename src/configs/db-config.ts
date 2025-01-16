@@ -11,6 +11,7 @@ const dbOptions: Options = {
 	database: GLOBAL_OPTIONS.DB_DATABASE,
 	username: GLOBAL_OPTIONS.DB_USER,
 	password: GLOBAL_OPTIONS.DB_PASSWORD,
+	logging: GLOBAL_OPTIONS.DEV_MODE,
 	dialect: 'mysql',
 	dialectModule: mysql2,
 	pool: {

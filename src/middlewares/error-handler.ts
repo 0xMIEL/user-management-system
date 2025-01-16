@@ -6,8 +6,10 @@ import type {
 } from 'express'
 import JWT from 'jsonwebtoken'
 import { UniqueConstraintError } from 'sequelize'
-import ServerError from '../errors/clientError.ts'
-import ClientError from '../errors/serverError.ts'
+import GLOBAL_OPTIONS from '../configs/global-options.ts'
+import STATUS_CODES from '../configs/status-codes.ts'
+import ClientError from '../errors/client-error.ts'
+import ServerError from '../errors/server-error.ts'
 
 const errorHandler: ErrorRequestHandler = (
 	err: Error,
@@ -15,47 +17,62 @@ const errorHandler: ErrorRequestHandler = (
 	res: Response,
 	next: NextFunction,
 ) => {
-	if (
-		err instanceof ClientError ||
-		err instanceof JWT.JsonWebTokenError ||
-		err instanceof JWT.TokenExpiredError
-	) {
-		res.status(400).json({
+	if (err instanceof ClientError) {
+		res.status(err.statusCode).json({
 			status: 'error',
 			message: err.message,
 		})
+
 		return
 	}
 
 	if (err instanceof UniqueConstraintError) {
-		res.status(400).json({
+		res.status(STATUS_CODES.BAD_REQUEST).json({
 			status: 'error',
 			message: err.errors[0]?.message,
 		})
+
 		return
 	}
 
-	if (err instanceof ServerError) {
-		if (process.env.NODE_ENV === 'development') {
-			res.status(500).json({
-				status: 'devError',
-				message: err.devMsg,
-			})
-			return
-		}
+	if (
+		err instanceof JWT.JsonWebTokenError ||
+		err instanceof JWT.TokenExpiredError
+	) {
+		res.status(STATUS_CODES.UNAUTHORIZED).json({
+			status: 'error',
+			message: err.message,
+		})
+
+		return
 	}
 
 	if (err instanceof SyntaxError) {
-		res.status(400).json({
+		res.status(STATUS_CODES.BAD_REQUEST).json({
 			status: 'error',
 			message: 'Body JSON syntax error.',
 		})
 		return
 	}
 
-	res.status(500).json({
+	if (err instanceof ServerError) {
+		let message = err.message
+
+		if (GLOBAL_OPTIONS.DEV_MODE) {
+			message = err.devMessage
+		}
+
+		res.status(err.statusCode).json({
+			status: 'error',
+			message,
+		})
+
+		return
+	}
+
+	res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
 		status: 'error',
-		message: 'Internal error.',
+		message: 'Internal server error.',
 	})
 }
 

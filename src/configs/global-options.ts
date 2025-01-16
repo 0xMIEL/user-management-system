@@ -11,8 +11,7 @@ const GLOBAL_OPTIONS = {
 	DB_DATABASE: process.env.DB_DATABASE ?? 'user_management_system',
 	DB_USER: process.env.DB_USER ?? 'root',
 	DB_PASSWORD: process.env.DB_PASSWORD ?? 'secret',
-	BEARER_REGEXP:
-		/^Bearer\s([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)$/,
+	DEV_MODE: process.env.NODE_ENV === 'development',
 }
 
 export default GLOBAL_OPTIONS

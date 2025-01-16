@@ -4,17 +4,17 @@ import GLOBAL_OPTIONS from './configs/global-options.ts'
 
 try {
 	await sequelize.authenticate()
-	console.info('\x1b[32m%s\x1b[0m', 'properly connected to the database...')
+	console.info('1. properly connected to the database...')
 
 	await sequelize.sync({ force: false })
-	console.info('\x1b[32m%s\x1b[0m', 'properly synchronized the database...')
+	console.info('2. properly synchronized the database...')
 
 	app.listen(GLOBAL_OPTIONS.PORT, () =>
 		console.info(
-			'\x1b[34m%s\x1b[0m',
-			`server is running on http://localhost:${GLOBAL_OPTIONS.PORT}...`,
+			`3. server is running on http://localhost:${GLOBAL_OPTIONS.PORT}...`,
 		),
 	)
 } catch (error) {
-	console.log(error)
+	console.log('Error: ', error)
+	process.exit(1)
 }

@@ -1,7 +1,8 @@
-import GLOBAL_OPTIONS from '../configs/global-options.ts'
+const bearerReqexp =
+	/^Bearer\s([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)$/
 
 const extractBearerToken = (authHeader: string): string | null => {
-	const match = authHeader.match(GLOBAL_OPTIONS.BEARER_REGEXP)
+	const match = authHeader.match(bearerReqexp)
 
 	if (!match || !match[1]) return null
 

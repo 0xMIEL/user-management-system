@@ -26,7 +26,7 @@ class UserService {
 		})
 	}
 
-	static async create(userAttributes: CreationAttributes<User>) {
+	static async create(userAttributes: CreationAttributes<User>): Promise<User> {
 		return await User.create(userAttributes)
 	}
 
@@ -34,12 +34,10 @@ class UserService {
 		creatorId: UUID,
 		id: string,
 		updatedUserAttributes: UpdatedUserAttributes,
-	): Promise<number> {
-		const [affectedRows] = await User.update(updatedUserAttributes, {
+	): Promise<void> {
+		await User.update(updatedUserAttributes, {
 			where: { id, creatorId },
 		})
-
-		return affectedRows
 	}
 
 	static async deleteById(creatorId: UUID, id: string): Promise<number> {

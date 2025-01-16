@@ -2,27 +2,27 @@ import { Router } from 'express'
 import AccountController from '../controllers/account-controller.ts'
 import authenticateAccount from '../middlewares/authenticate-account.ts'
 import detectError from '../middlewares/detect-error.ts'
-import { validateBody } from '../middlewares/validate-data.ts'
+import Validator from '../middlewares/validate-data.ts'
 import AccountValidator from '../validators/account-validator.ts'
 
 const accountRouter = Router()
 
 accountRouter.post(
 	'/register',
-	validateBody(AccountValidator.registerBodySchema),
+	Validator.validateBody(AccountValidator.registerBodySchema),
 	detectError(AccountController.register),
 )
 
 accountRouter.get(
 	'/login',
-	validateBody(AccountValidator.loginBodySchema),
+	Validator.validateBody(AccountValidator.loginBodySchema),
 	detectError(AccountController.login),
 )
 
 accountRouter.delete(
 	'/deregister',
 	authenticateAccount,
-	validateBody(AccountValidator.deregisterBodySchema),
+	Validator.validateBody(AccountValidator.deregisterBodySchema),
 	detectError(AccountController.deregister),
 )
 

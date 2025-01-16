@@ -2,7 +2,8 @@ import bcrypt from 'bcrypt'
 import type { UUID } from 'crypto'
 import JWT from 'jsonwebtoken'
 import GLOBAL_OPTIONS from '../configs/global-options.ts'
-import ClientError from '../errors/serverError.ts'
+import STATUS_CODES from '../configs/status-codes.ts'
+import ClientError from '../errors/client-error.ts'
 import Account from '../models/account-model.ts'
 
 class AccountService {
@@ -18,12 +19,18 @@ class AccountService {
 		})
 
 		if (!account)
-			throw new ClientError('No account found with the provided login.')
+			throw new ClientError(
+				'No account found with the provided login.',
+				STATUS_CODES.NOT_FOUND,
+			)
 
 		const isPasswordCorrect = await bcrypt.compare(password, account.hash)
 
 		if (!isPasswordCorrect)
-			throw new ClientError('The password you entered is incorrect.')
+			throw new ClientError(
+				'The password you entered is incorrect.',
+				STATUS_CODES.UNAUTHORIZED,
+			)
 
 		const token = JWT.sign(
 			{
@@ -46,12 +53,16 @@ class AccountService {
 			},
 		})
 
-		if (!account) throw new ClientError('Account does not exist.')
+		if (!account)
+			throw new ClientError('Account does not exist.', STATUS_CODES.BAD_REQUEST)
 
 		const isPasswordCorrect = await bcrypt.compare(password, account.hash)
 
 		if (!isPasswordCorrect)
-			throw new ClientError('Incorrect password provided.')
+			throw new ClientError(
+				'Incorrect password provided.',
+				STATUS_CODES.UNAUTHORIZED,
+			)
 
 		await Account.destroy({
 			where: {

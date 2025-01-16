@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express'
-import ServerError from '../errors/clientError.ts'
+import STATUS_CODES from '../configs/status-codes.ts'
+import ServerError from '../errors/server-error.ts'
 import AccountService from '../services/account-service.ts'
 
 class AccountController {
@@ -10,7 +11,7 @@ class AccountController {
 
 		if (!account) throw new ServerError('Problem with creating a user.')
 
-		res.status(201).json({
+		res.status(STATUS_CODES.OK).json({
 			status: 'success',
 			message: `An account named '${login}' has been successfully registered.`,
 		})
@@ -21,7 +22,7 @@ class AccountController {
 
 		const token = await AccountService.login(login, password)
 
-		res.status(200).json({
+		res.status(STATUS_CODES.CREATED).json({
 			status: 'success',
 			message: `A user named '${login}' was successfully granted an access token.`,
 			token,
@@ -35,7 +36,7 @@ class AccountController {
 
 		await AccountService.deregister(req.accountId, password)
 
-		res.status(200).json({
+		res.status(STATUS_CODES.OK).json({
 			status: 'success',
 			message: `The account with ID '${req.accountId}' has been successfully deregistered.`,
 		})
